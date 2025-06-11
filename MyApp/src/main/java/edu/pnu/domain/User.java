@@ -1,49 +1,35 @@
+// 📁 src/main/java/edu/pnu/domain/User.java
+
 package edu.pnu.domain;
 
-import java.util.Date;
+import jakarta.persistence.*;
+import lombok.*;
+import java.time.LocalDateTime;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
-import org.springframework.data.jpa.repository.Temporal;
-
-import edu.pnu.domain.User.UserBuilder;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.TemporalType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-@Builder 
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
-@ToString
-@Entity
-
-
-
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
-	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private User user;
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@Column(nullable = false)
-	private String title;
-	@Column(nullable = false)
-	private String content;
-	private String writer;
-	@jakarta.persistence.Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "timestamp default current_timestamp")
-	private Date createDate;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long num;  //회원 고유 ID (PK)
+
+    @Column(length = 100, nullable = false, unique = true)
+    private String id;  //(로그인 ID 용도)
+
+    @Column(length = 255, nullable = false)
+    private String password;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
